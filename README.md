@@ -11,18 +11,11 @@ Both services share one network and keep their data in Docker volumes, so conten
 
 ## Table of Contents
 
-- [Repository Contents](#repository-contents)
 - [Quickstart](#quickstart)
 - [Usage](#usage)
-
-## Repository Contents
-
-| File | Purpose |
-| --- | --- |
-| `docker-compose.yaml` | Defines the `wordpress` and `db` services, their volumes and the shared network. |
-| `.env.example` | Template for the `.env` file that holds the credentials. |
-| `.gitignore` | Keeps the `.env` file and other local artifacts out of the repository. |
-| `README.md` | This documentation. |
+- [Repository Contents](#repository-contents)
+- [Testing](#testing)
+- [Security](#security)
 
 ## Quickstart
 
@@ -98,3 +91,51 @@ docker compose down      # stop and remove the containers, data is kept
 | `wordpress_data` | `wordpress` at `/var/www/html` | WordPress files, themes, plugins and uploads |
 
 The volumes survive `docker compose down` and restarts. To delete all data and start from scratch, run `docker compose down -v`.
+
+## Repository Contents
+
+| File | Purpose |
+| --- | --- |
+| `docker-compose.yaml` | Defines the `wordpress` and `db` services, their volumes and the shared network. |
+| `.env.example` | Template for the `.env` file that holds the credentials. |
+| `.gitignore` | Keeps the `.env` file and other local artifacts out of the repository. |
+| `README.md` | This documentation. |
+
+## Testing
+
+Replace `<your-server-ip>` with the address of your host.
+
+**Reachable on port 8080.** Run this from a machine that is not the server:
+
+```bash
+curl --head http://<your-server-ip>:8080/wp-login.php   # expect: HTTP/1.1 200 OK
+```
+
+**Admin login.** Open `http://<your-server-ip>:8080/wp-admin`, log in with the admin user created during installation and navigate the dashboard.
+
+**Data survives a restart.** Change something in WordPress, for example the site title, then recreate the containers and reload the page:
+
+```bash
+docker compose down && docker compose up -d
+```
+
+The change and the admin account are still there, because both volumes are kept.
+
+**Containers restart after a failure.** `docker kill` counts as a deliberate stop and does not trigger the restart policy, so end the main process from inside the container:
+
+```bash
+docker compose exec wordpress sh -c "kill 1"
+docker compose exec db sh -c "kill 1"
+docker compose ps   # both services are "Up" again after a few seconds
+docker inspect --format '{{.Name}} restarts={{.RestartCount}}' $(docker compose ps -q)
+```
+
+`RestartCount` is `1` for both containers.
+
+## Security
+
+- No passwords, user names or IP addresses are tracked; the documentation uses placeholders such as `<your-server-ip>`.
+- Credentials reach the containers only through the untracked `.env` file. Restrict it with `chmod 600 .env`.
+- Only the WordPress port is published. The database has no published port and is reachable only inside the `wordpress_net` network.
+- Both services use the official images with pinned version tags.
+- The setup serves plain HTTP. For anything beyond testing, put a reverse proxy with TLS in front of it and choose a strong admin password.
