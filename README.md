@@ -2,14 +2,6 @@
 
 Multi-container setup that runs WordPress together with a MySQL database using Docker Compose.
 
-## Table of Contents
-
-- [Description](#description)
-- [Quickstart](#quickstart)
-- [Usage](#usage)
-
-## Description
-
 This repository contains everything needed to run a WordPress site in two containers:
 
 - `wordpress` serves the site and is published on port `8080`.
@@ -17,7 +9,13 @@ This repository contains everything needed to run a WordPress site in two contai
 
 Both services share one network and keep their data in Docker volumes, so content survives restarts. Credentials are not part of the repository; they are passed to the containers through a local `.env` file.
 
-### Repository contents
+## Table of Contents
+
+- [Repository Contents](#repository-contents)
+- [Quickstart](#quickstart)
+- [Usage](#usage)
+
+## Repository Contents
 
 | File | Purpose |
 | --- | --- |
