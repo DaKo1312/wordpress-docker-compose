@@ -1,4 +1,22 @@
 services:
+  wordpress:
+    image: wordpress:6.8-apache
+    restart: unless-stopped
+    depends_on:
+      - db
+    ports:
+      - "${WORDPRESS_PORT:-8080}:80"
+    env_file:
+      - .env
+    environment:
+      WORDPRESS_DB_HOST: db:3306
+      WORDPRESS_DB_NAME: ${DB_NAME:-wordpress}
+      WORDPRESS_TABLE_PREFIX: ${WORDPRESS_TABLE_PREFIX:-wp_}
+    volumes:
+      - wordpress_data:/var/www/html
+    networks:
+      - wordpress_net
+
   db:
     image: mysql:8.4
     restart: unless-stopped
@@ -12,6 +30,7 @@ services:
       - wordpress_net
 
 volumes:
+  wordpress_data:
   db_data:
 
 networks:
