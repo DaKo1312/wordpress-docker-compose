@@ -1,0 +1,18 @@
+services:
+  db:
+    image: mysql:8.4
+    restart: unless-stopped
+    env_file:
+      - .env
+    environment:
+      MYSQL_DATABASE: ${DB_NAME:-wordpress}
+    volumes:
+      - db_data:/var/lib/mysql
+    networks:
+      - wordpress_net
+
+volumes:
+  db_data:
+
+networks:
+  wordpress_net:
