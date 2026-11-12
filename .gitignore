@@ -1,0 +1,14 @@
+# Environment files with credentials
+.env
+.env.*
+!.env.example
+
+# Logs and local database dumps
+*.log
+*.sql
+
+# Editor and OS files
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
