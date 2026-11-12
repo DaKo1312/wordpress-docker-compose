@@ -2,12 +2,7 @@
 
 Multi-container setup that runs WordPress together with a MySQL database using Docker Compose.
 
-This repository contains everything needed to run a WordPress site in two containers:
-
-- `wordpress` serves the site and is published on port `8080`.
-- `db` runs the MySQL database that stores the WordPress content.
-
-Both services share one network and keep their data in Docker volumes, so content survives restarts. Credentials are not part of the repository; they are passed to the containers through a local `.env` file.
+The repository contains the Compose file and an environment template to start both services on any Docker host. Data is kept in Docker volumes, and credentials are passed in through a local `.env` file.
 
 ## Table of Contents
 
@@ -29,7 +24,7 @@ Both services share one network and keep their data in Docker volumes, so conten
 1. Clone the repository and change into it:
 
    ```bash
-   git clone https://github.com/DaKo1312/wordpress-docker-compose.git
+   git clone git@github.com:DaKo1312/wordpress-docker-compose.git
    cd wordpress-docker-compose
    ```
 
